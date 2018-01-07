@@ -1,0 +1,231 @@
+﻿@model IEnumerable<MeetingOrganizer.Models.Meeting>
+
+@{
+    Layout = null;
+}
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <style>
+        .center {
+            margin-top: 50px;
+        }
+
+        .modal-header {
+            padding-bottom: 5px;
+        }
+
+        .modal-footer {
+            padding: 0;
+        }
+
+            .modal-footer .btn-group button {
+                height: 40px;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                border: none;
+                border-right: 1px solid #ddd;
+            }
+
+            .modal-footer .btn-group:last-child > button {
+                border-right: 0;
+            }
+        .well-block {
+            background-color: #fff;
+            border: 1px solid #e9e6e8;
+            padding: 40px;
+        }
+
+        .well-title {
+            margin-bottom: 40px;
+        }
+
+        /* Table css Start */
+        a.del {
+            background: #d9534f;
+            border-radius: 2px;
+            width: 35px;
+            height: 28px;
+            padding-left: 12px;
+            line-height: 10px;
+        }
+
+        a.edit {
+            padding-left: 10px;
+            background: #337ab7;
+            color: #fff;
+            border-radius: 2px;
+            border: none;
+        }
+
+        tr.row-name {
+            font-size: 18px;
+            color: #448aff;
+        }
+
+        tr.row-content {
+            color: #6c7173;
+        }
+
+        table {
+            border-bottom: 8px solid #448aff;
+        }
+
+        td.check {
+            text-align: center;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background: #F0F2F2 !important;
+        }
+
+        a.btn-danger:hover {
+            background: #de6c69;
+        }
+
+        a.btn-danger {
+            background: #d9534f;
+        }
+
+        a.btn-top {
+            background: #448aff;
+            color: #fff;
+            border: 1px solid #448aff;
+            padding: 7px 10px;
+            border-radius: 4px;
+        }
+
+            a.btn-top:hover {
+                text-decoration: none;
+                box-shadow: 3px 3px 5px #222;
+                transition: box-shadow 0.5s;
+            }
+    </style>
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="well-block">
+                    <div class="well-title">
+                        <h2>Create A Meeting</h2>
+                    </div>
+                    @using (Html.BeginForm("NewMeeting", "Home", FormMethod.Post))
+                    {
+
+                        @Html.AntiForgeryToken()
+                        <!-- Form start -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="name">Meeting Subject</label>
+                                    @Html.TextBox("MeetingSubject", null, new { @class = "form-control input-md", @placeholder = "Meeting Subject" })
+                                </div>
+                            </div>
+
+                            <!-- Text input-->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="date">Date</label>
+                                    @Html.TextBox("Date", null, new { @type = "date", @class = "form-control input-md", @placeholder = "Preferred Date" })
+                                </div>
+                            </div>
+                            <!-- Select Basic -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="time">Starting Time</label>
+                                    @Html.TextBox("StartingTime", null, new { @type = "time", @class = "form-control input-md" })
+                                </div>
+                            </div>
+                            <!-- Select Basic -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="time">Ending Time</label>
+                                    @Html.TextBox("EndingTime", null, new { @type = "time", @class = "form-control input-md" })
+                                </div>
+                            </div>
+                            <!-- Button -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label" for="time">Participants</label>
+                                    @Html.TextArea("Participants", null, new { @rows = "3", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button id="singlebutton" name="singlebutton" class="btn btn-success">Make An Appointment</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                    <!-- form end -->
+                </div>
+            </div>
+            <div class="col-md-6">
+
+                <div class="feature-block">
+                    <h2 style="color: #448aff;text-align: center;">Scheduled Meetings  </h2>
+                    <hr>
+                    <table class="table table-striped">
+
+                </div>
+                <thead>
+                    <tr class="row-name">
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Participants</th>
+                        <th>Settings</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+    {
+                <tr class="row-content">
+                    <td>@item.MeetingSubject</td>
+                    <td>@item.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@item.StartingTime.ToString("hh':'mm")</td>
+                    <td>@item.Participants </td>
+
+                    <td>
+
+
+                        <a class="btn btn-danger edit" href="@Url.Action("DeleteMeeting",new { @id = item.MeetingID })" aria-label="Settings">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                        &nbsp
+                        <a class="btn btn-info edit"  href=" @Url.Action("UpdateMeeting", "Home", new { @id = item.MeetingID })" aria-label="Settings">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a>
+                    </td>
+                </tr>
+}
+                   
+                </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+   
+
+
+</body>
+</html>
